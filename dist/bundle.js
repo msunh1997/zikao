@@ -1,0 +1,1 @@
+(()=>{"use strict";document.write((function(){return"hello"}))})();

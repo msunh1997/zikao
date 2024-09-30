@@ -3,27 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>题目</title>
 </head>
 <script src="./07169/4-1.js"></script>
-<script src="./vue3.js"></script>
 <body>
     <div id="app">
-        {{ message }}
+      <div class="list" v-for="(item, index) in kuList" :key="index">
+        <div class="list-title">{{ item.TypeInfo.Title }}</div>
+
+        <div class="item" v-for="(i, id) in item.Question">
+          <div class="item-title">
+            {{ id + 1 }}.{{ i.Title }}<span style="color:red">{{ i.Answer }}</span>
+          </div>
+
+          <div class="item-answer">
+            <span class="answer-item" v-for="(text, value) in i.Body">
+              {{ value }}.{{ text }}
+            </span>
+          </div>
+        </div>
+      </div>  
+      <!-- <select>
+        <option value=""></option>
+      </select> -->
     </div>
 </body>
+<script src="./vue3.js"></script>
 <script>
+  // import { tm4_1 } from './07169/tm4_1'
   const { createApp, ref } = Vue
 
   createApp({
     setup() {
+      const kuList = ref(null)
+      tm4_1.forEach(i => {
+        i.Question.forEach(item => {
+          item.Body = JSON.parse(item.Body)
+        })
+      });
+      kuList.value = tm4_1
       const message = ref('Hello vue!')
+      // const title1 = ref('')
+      // const title2 = ref('')
+      // const title3 = ref('')
+      // if(tmp4_1) {
+      //   tmp4_1.forEach(i => {
+          
+      //   });
+      // }
       console.log(tm4_1)
-      message.value = tm4_1[0].TypeInfo.Title
+      // const { Title, TitleLong } = m4_1[0].TypeInfo
+      
+      // message.value = tm4_1[0].TypeInfo.Title
       return {
-        message
+        message,
+        kuList
       }
     }
   }).mount('#app')
 </script>
+<style>
+  body {
+    font-size: 12px;
+    /* transform: scale(0.8); */
+  }
+  /* #app {
+    margin-top: -88px;
+  } */
+  .list {
+    padding: 8px;
+  }
+  .list-title {
+    font-weight: bold;
+    padding-bottom: 4px;
+  }
+  .item {
+    padding-bottom: 10px;
+  }
+  item-title {
+    padding-bottom: 6px;
+  }
+  .answer-item {
+    padding-right: 18px;
+  }
+</style>
 </html>
