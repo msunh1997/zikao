@@ -19,7 +19,7 @@
 <script src="./07169/real1.js"></script>
 
 <body>
-  <div id="app">
+  <div id="app" @click="showPage = !showPage">
     <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
 
     <select name="323" @change="selectTK" v-model="nowTK">
