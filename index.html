@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>题目</title>
+</head>
+<script src="./07169/1-1.js"></script>
+<script src="./07169/1-2.js"></script>
+<script src="./07169/2-1.js"></script>
+<script src="./07169/2-2.js"></script>
+<script src="./07169/3-1.js"></script>
+<script src="./07169/3-2.js"></script>
+<script src="./07169/4-1.js"></script>
+<script src="./07169/4-2.js"></script>
+<script src="./07169/5-1.js"></script>
+<script src="./07169/5-2.js"></script>
+<script src="./07169/real1.js"></script>
+
+<body>
+  <div id="app">
+    <div v-if="showPage">
+      <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
+
+      <select name="323" @change="selectTK" v-model="nowTK">
+        <option :value="item" v-for="(item, id) in TKList">{{ item }}</option>
+      </select>
+    </div>
+
+    <div class="list" v-for="(item, index) in kuList" :key="index"  @click="showPage = !showPage">
+      <div class="list-title">{{ index + 1 }}.{{ item.TypeInfo.Title }}</div>
+
+      <div class="item" v-for="(i, id) in item.Question">
+        <div class="item-title">
+          {{ id + 1 }}.{{ i.Title }}<span v-if="showAnswer" style="color:red">{{ i.Answer }}</span>
+        </div>
+
+        <div class="item-answer">
+          <span class="answer-item" v-for="(text, value) in i.Body">
+            {{ value }}.{{ text }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="./vue3.js"></script>
+<script>
+  const { createApp, ref } = Vue
+
+  createApp({
+    setup() {
+      const showAnswer = ref(false)
+      const showPage = ref(false)
+      const kuList = ref(null)
+      const TKList = ref([
+        'topic1_1',
+        'topic1_2',
+        'topic2_1',
+        'topic2_2',
+        'topic3_1',
+        'topic3_2',
+        'topic4_1',
+        'topic4_2',
+        'topic5_1',
+        'topic5_2',
+        'real1'
+      ])
+      const nowTK = ref(TKList.value[0])
+      this[TKList.value[0]].forEach(i => {
+        i.Question.forEach(item => {
+          item.Body = JSON.parse(item.Body)
+        })
+      });
+      kuList.value = this[TKList.value[0]]
+      console.log(kuList.value, TKList[0])
+      function selectTK(e) {
+        console.log(this, e.target.value)
+        kuList.value = this[e.target.value]
+        kuList.value.forEach(i => {
+          i.Question.forEach(item => {
+            console.log(typeof item.Body)
+            if (item.Body && typeof item.Body === 'string') {
+              item.Body = JSON.parse(item.Body)
+            }
+          })
+        });
+        console.log(e.target.value)
+      }
+
+      return {
+        showPage,
+        showAnswer,
+        nowTK,
+        TKList,
+        kuList,
+        selectTK
+      }
+    }
+  }).mount('#app')
+</script>
+<style>
+  body {
+    font-size: 12px;
+    /* transform: scale(0.8); */
+  }
+
+  /* #app {
+    margin-top: -88px;
+  } */
+  .list {
+    padding: 8px;
+  }
+
+  .list-title {
+    font-weight: bold;
+    padding-bottom: 4px;
+  }
+
+  .item {
+    padding-bottom: 10px;
+    margin-left: 8px;
+  }
+
+  item-title {
+    padding-bottom: 6px;
+  }
+
+  .answer-item {
+    padding-right: 18px;
+  }
+</style>
+
+</html>
