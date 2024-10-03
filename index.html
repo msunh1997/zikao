@@ -6,20 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>题目</title>
 </head>
+<script src="./07169/1-1.js"></script>
+<script src="./07169/1-2.js"></script>
+<script src="./07169/2-1.js"></script>
+<script src="./07169/2-2.js"></script>
+<script src="./07169/3-1.js"></script>
+<script src="./07169/3-2.js"></script>
 <script src="./07169/4-1.js"></script>
 <script src="./07169/4-2.js"></script>
+<script src="./07169/5-1.js"></script>
+<script src="./07169/5-2.js"></script>
+<script src="./07169/real1.js"></script>
 
 <body>
   <div id="app">
-    <button @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
+    <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
 
-    <select @change="selectTK" v-model="nowTK">
-      <option value="4_1">4-1</option>
-      <option value="4_2">4-2</option>
+    <select name="323" @change="selectTK" v-model="nowTK">
+      <option :value="item" v-for="(item, id) in TKList">{{ item }}</option>
     </select>
 
     <div class="list" v-for="(item, index) in kuList" :key="index">
-      <div class="list-title">{{ item.TypeInfo.Title }}</div>
+      <div class="list-title">{{ index + 1 }}.{{ item.TypeInfo.Title }}</div>
 
       <div class="item" v-for="(i, id) in item.Question">
         <div class="item-title">
@@ -37,56 +45,51 @@
 </body>
 <script src="./vue3.js"></script>
 <script>
-  // import { tm4_1 } from './07169/tm4_1'
   const { createApp, ref } = Vue
 
   createApp({
     setup() {
       const showAnswer = ref(false)
       const kuList = ref(null)
-      tm4_1.forEach(i => {
+      const TKList = ref([
+        'topic1_1',
+        'topic1_2',
+        'topic2_1',
+        'topic2_2',
+        'topic3_1',
+        'topic3_2',
+        'topic4_1',
+        'topic4_2',
+        'topic5_1',
+        'topic5_2',
+        'real1'
+      ])
+      const nowTK = ref(TKList.value[0])
+      this[TKList.value[0]].forEach(i => {
         i.Question.forEach(item => {
           item.Body = JSON.parse(item.Body)
         })
       });
-      kuList.value = tm4_1
-      const nowTK = ref('4_1')
-      const message = ref('Hello vue!')
-      // const title1 = ref('')
-      // const title2 = ref('')
-      // const title3 = ref('')
-      // if(tmp4_1) {
-      //   tmp4_1.forEach(i => {
-
-      //   });
-      // }
+      kuList.value = this[TKList.value[0]]
+      console.log(kuList.value, TKList[0])
       function selectTK(e) {
-        switch(e.target.value) {
-          case '4_1':
-            kuList.value = tm4_1
-            break
-          case '4_2':
-            kuList.value = tm4_2
-            break
-        }
+        console.log(this, e.target.value)
+        kuList.value = this[e.target.value]
         kuList.value.forEach(i => {
-        i.Question.forEach(item => {
-          console.log(typeof item.Body)
-          if(typeof item.Body === 'string') {
-            item.Body = JSON.parse(item.Body)
-          }
-        })
-      });
+          i.Question.forEach(item => {
+            console.log(typeof item.Body)
+            if (item.Body && typeof item.Body === 'string') {
+              item.Body = JSON.parse(item.Body)
+            }
+          })
+        });
         console.log(e.target.value)
       }
-      console.log(tm4_1)
-      // const { Title, TitleLong } = m4_1[0].TypeInfo
 
-      // message.value = tm4_1[0].TypeInfo.Title
       return {
         showAnswer,
         nowTK,
-        message,
+        TKList,
         kuList,
         selectTK
       }
@@ -113,6 +116,7 @@
 
   .item {
     padding-bottom: 10px;
+    margin-left: 8px;
   }
 
   item-title {
