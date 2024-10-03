@@ -1,32 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>题目</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>题目</title>
 </head>
 <script src="./07169/4-1.js"></script>
+<script src="./07169/4-2.js"></script>
+
 <body>
-    <div id="app">
-      <div class="list" v-for="(item, index) in kuList" :key="index">
-        <div class="list-title">{{ item.TypeInfo.Title }}</div>
+  <div id="app">
+    <button @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
 
-        <div class="item" v-for="(i, id) in item.Question">
-          <div class="item-title">
-            {{ id + 1 }}.{{ i.Title }}<span style="color:red">{{ i.Answer }}</span>
-          </div>
+    <select @change="selectTK" v-model="nowTK">
+      <option value="4_1">4-1</option>
+      <option value="4_2">4-2</option>
+    </select>
 
-          <div class="item-answer">
-            <span class="answer-item" v-for="(text, value) in i.Body">
-              {{ value }}.{{ text }}
-            </span>
-          </div>
+    <div class="list" v-for="(item, index) in kuList" :key="index">
+      <div class="list-title">{{ item.TypeInfo.Title }}</div>
+
+      <div class="item" v-for="(i, id) in item.Question">
+        <div class="item-title">
+          {{ id + 1 }}.{{ i.Title }}<span v-if="showAnswer" style="color:red">{{ i.Answer }}</span>
         </div>
-      </div>  
-      <!-- <select>
-        <option value=""></option>
-      </select> -->
+
+        <div class="item-answer">
+          <span class="answer-item" v-for="(text, value) in i.Body">
+            {{ value }}.{{ text }}
+          </span>
+        </div>
+      </div>
     </div>
+  </div>
 </body>
 <script src="./vue3.js"></script>
 <script>
@@ -35,6 +42,7 @@
 
   createApp({
     setup() {
+      const showAnswer = ref(false)
       const kuList = ref(null)
       tm4_1.forEach(i => {
         i.Question.forEach(item => {
@@ -42,22 +50,45 @@
         })
       });
       kuList.value = tm4_1
+      const nowTK = ref('4_1')
       const message = ref('Hello vue!')
       // const title1 = ref('')
       // const title2 = ref('')
       // const title3 = ref('')
       // if(tmp4_1) {
       //   tmp4_1.forEach(i => {
-          
+
       //   });
       // }
+      function selectTK(e) {
+        switch(e.target.value) {
+          case '4_1':
+            kuList.value = tm4_1
+            break
+          case '4_2':
+            kuList.value = tm4_2
+            break
+        }
+        kuList.value.forEach(i => {
+        i.Question.forEach(item => {
+          console.log(typeof item.Body)
+          if(typeof item.Body === 'string') {
+            item.Body = JSON.parse(item.Body)
+          }
+        })
+      });
+        console.log(e.target.value)
+      }
       console.log(tm4_1)
       // const { Title, TitleLong } = m4_1[0].TypeInfo
-      
+
       // message.value = tm4_1[0].TypeInfo.Title
       return {
+        showAnswer,
+        nowTK,
         message,
-        kuList
+        kuList,
+        selectTK
       }
     }
   }).mount('#app')
@@ -67,24 +98,30 @@
     font-size: 12px;
     /* transform: scale(0.8); */
   }
+
   /* #app {
     margin-top: -88px;
   } */
   .list {
     padding: 8px;
   }
+
   .list-title {
     font-weight: bold;
     padding-bottom: 4px;
   }
+
   .item {
     padding-bottom: 10px;
   }
+
   item-title {
     padding-bottom: 6px;
   }
+
   .answer-item {
     padding-right: 18px;
   }
 </style>
+
 </html>
