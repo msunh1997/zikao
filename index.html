@@ -19,14 +19,16 @@
 <script src="./07169/real1.js"></script>
 
 <body>
-  <div id="app" @click="showPage = !showPage">
-    <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
+  <div id="app">
+    <div v-if="showPage">
+      <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
 
-    <select name="323" @change="selectTK" v-model="nowTK">
-      <option :value="item" v-for="(item, id) in TKList">{{ item }}</option>
-    </select>
+      <select name="323" @change="selectTK" v-model="nowTK">
+        <option :value="item" v-for="(item, id) in TKList">{{ item }}</option>
+      </select>
+    </div>
 
-    <div class="list" v-for="(item, index) in kuList" :key="index">
+    <div class="list" v-for="(item, index) in kuList" :key="index"  @click="showPage = !showPage">
       <div class="list-title">{{ index + 1 }}.{{ item.TypeInfo.Title }}</div>
 
       <div class="item" v-for="(i, id) in item.Question">
@@ -50,6 +52,7 @@
   createApp({
     setup() {
       const showAnswer = ref(false)
+      const showPage = ref(false)
       const kuList = ref(null)
       const TKList = ref([
         'topic1_1',
@@ -87,6 +90,7 @@
       }
 
       return {
+        showPage,
         showAnswer,
         nowTK,
         TKList,
