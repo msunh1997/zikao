@@ -6,39 +6,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>题目</title>
 </head>
-<script src="./07169/1-1.js"></script>
-<script src="./07169/1-2.js"></script>
-<script src="./07169/2-1.js"></script>
-<script src="./07169/2-2.js"></script>
-<script src="./07169/3-1.js"></script>
-<script src="./07169/3-2.js"></script>
-<script src="./07169/4-1.js"></script>
-<script src="./07169/4-2.js"></script>
-<script src="./07169/5-1.js"></script>
-<script src="./07169/5-2.js"></script>
+<script src="./07169/1_1.js"></script>
+<script src="./07169/1_2.js"></script>
+<script src="./07169/2_1.js"></script>
+<script src="./07169/2_2.js"></script>
+<script src="./07169/3_1.js"></script>
+<script src="./07169/3_2.js"></script>
+<script src="./07169/4_1.js"></script>
+<script src="./07169/4_2.js"></script>
+<script src="./07169/5_1.js"></script>
+<script src="./07169/5_2.js"></script>
 <script src="./07169/real1.js"></script>
 
+
+<script src="./02141/1_1.js"></script>
+<script src="./02141/1_2.js"></script>
+<script src="./02141/2_1.js"></script>
+<script src="./02141/2_2.js"></script>
+<script src="./02141/3_1.js"></script>
+<script src="./02141/3_2.js"></script>
+<script src="./02141/4_1.js"></script>
+<script src="./02141/4_2.js"></script>
+<script src="./02141/5_1.js"></script>
+<script src="./02141/5_2.js"></script>
+
+
+<script src="./01336/1_1.js"></script>
+<script src="./01336/1_2.js"></script>
+<script src="./01336/2_1.js"></script>
+<script src="./01336/2_2.js"></script>
+<script src="./01336/3_1.js"></script>
+<script src="./01336/3_2.js"></script>
+<script src="./01336/4_1.js"></script>
+<script src="./01336/4_2.js"></script>
+<script src="./01336/5_1.js"></script>
+<script src="./01336/5_2.js"></script>
 <body>
   <div id="app">
     <div v-if="showPage">
       <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
 
-      <select name="323" @change="selectTK" v-model="nowTK">
-        <option :value="item" v-for="(item, id) in TKList">{{ item }}</option>
+      科目：<select @change="selectType" v-model="nowType">
+        <option :value="item.value" v-for="(item, id) in TypeList">{{ item.value + item.label }}</option>
+      </select>
+      题库：<select name="323" @change="selectTK" v-model="nowTK">
+        <option :value="item" v-for="(item, id) in TKList[nowType]">{{ item }}</option>
       </select>
     </div>
 
-    <div class="list" v-for="(item, index) in kuList" :key="index"  @click="showPage = !showPage">
+    <div class="list" v-for="(item, index) in kuList" :key="index" @click="showPage = !showPage">
       <div class="list-title">{{ index + 1 }}.{{ item.TypeInfo.Title }}</div>
 
       <div class="item" v-for="(i, id) in item.Question">
         <div class="item-title">
-          {{ id + 1 }}.{{ i.Title }}<span v-if="showAnswer" style="color:red">{{ i.Answer }}</span>
+          {{ id + 1 }}.{{ i.Title }}<span v-if="showAnswer" style="color:red;font-size: 16px;font-weight: bold;">{{
+            i.Answer }}</span>
         </div>
 
         <div class="item-answer">
           <span class="answer-item" v-for="(text, value) in i.Body">
-            {{ value }}.{{ text }}
+            <span :style="'color:' + (i.Answer.includes(value) && showAnswer ? 'red' : 'black')">{{ value }}.{{ text
+              }}</span>
           </span>
         </div>
       </div>
@@ -51,33 +79,45 @@
 
   createApp({
     setup() {
+      // 答案展示开关
       const showAnswer = ref(false)
-      const showPage = ref(false)
+      // 页面操作开关
+      const showPage = ref(true)
+
+      // 科目
+      const TypeList = ref([{
+        value: '07169',
+        label: '软件开发工具与环境'
+      }, {
+        value: '02141',
+        label: '计算机网络技术'
+      }, {
+        value: '01336',
+        label: '软件项目管理'
+      }])
+      // 题库
       const kuList = ref(null)
-      const TKList = ref([
-        'topic1_1',
-        'topic1_2',
-        'topic2_1',
-        'topic2_2',
-        'topic3_1',
-        'topic3_2',
-        'topic4_1',
-        'topic4_2',
-        'topic5_1',
-        'topic5_2',
-        'real1'
-      ])
-      const nowTK = ref(TKList.value[0])
-      this[TKList.value[0]].forEach(i => {
-        i.Question.forEach(item => {
-          item.Body = JSON.parse(item.Body)
-        })
-      });
-      kuList.value = this[TKList.value[0]]
-      console.log(kuList.value, TKList[0])
-      function selectTK(e) {
-        console.log(this, e.target.value)
-        kuList.value = this[e.target.value]
+
+      // 试卷列表
+      const TKList = ref({
+        '07169': [],
+        '02141': [],
+        '01336': []
+      })
+
+      // 当前科目
+      const nowType = ref('07169')
+
+      // 选择对应科目
+      function selectType(e) {
+        // 切换科目
+        nowType.value = e.target.value
+        // 切换默认题库为该科目的第一份题目
+        nowTK.value = TKList.value[nowType.value][0]
+        // console.log(this, e.target.value)
+
+        // 初始化题库
+        kuList.value = this['topic' + nowTK.value + '_' + nowType.value]
         kuList.value.forEach(i => {
           i.Question.forEach(item => {
             console.log(typeof item.Body)
@@ -86,16 +126,73 @@
             }
           })
         });
-        console.log(e.target.value)
+        // console.log(nowTK.value)
       }
+
+      // 选择对应题库
+      function selectTK(e) {
+        console.log(this, e.target.value)
+        kuList.value = this['topic' + e.target.value + '_' + nowType.value]
+        kuList.value.forEach(i => {
+          i.Question.forEach(item => {
+            // console.log(typeof item.Body)
+            if (item.Body && typeof item.Body === 'string') {
+              item.Body = JSON.parse(item.Body)
+            }
+          })
+        });
+        // console.log(e.target.value)
+      }
+
+      // 获取所有引入题库
+      function getAllJSFiles() {
+        const scripts = document.querySelectorAll('script[src]');
+        return Array.from(scripts).map(script => script.src);
+      }
+
+      // 使用示例
+      const jsFiles = getAllJSFiles();
+
+      // console.log(jsFiles); // 打印所有引入的JS文件的URL列表
+      jsFiles.forEach(i => {
+          // console.log(TKList.value)
+        i = i.replace('.js', '')
+        if (i.includes('07169')) {
+          i = i.replace('file:///Users/msh/Desktop/Code/zikao/07169/', '')
+          TKList.value['07169'].push(i)
+        }
+        if (i.includes('01336')) {
+          i = i.replace('file:///Users/msh/Desktop/Code/zikao/01336/', '')
+          TKList.value['01336'].push(i)
+        }
+        if (i.includes('02141')) {
+          i = i.replace('file:///Users/msh/Desktop/Code/zikao/02141/', '')
+          TKList.value['02141'].push(i)
+        }
+          // console.log(TKList.value)
+      })
+
+      // 当前题库
+      const nowTK = ref(TKList.value[nowType.value][0])
+      // console.log(nowTK.value, this['topic' + TKList.value[0]])
+      this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value].forEach(i => {
+        i.Question.forEach(item => {
+          item.Body = JSON.parse(item.Body)
+        })
+      });
+      kuList.value = this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value]
+      // console.log(kuList.value, TKList[0])
 
       return {
         showPage,
         showAnswer,
         nowTK,
+        nowType,
         TKList,
+        TypeList,
         kuList,
-        selectTK
+        selectTK,
+        selectType
       }
     }
   }).mount('#app')
