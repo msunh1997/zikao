@@ -2,9 +2,9 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>题目</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>题目</title>
 </head>
 <script src="./vue3.js"></script>
 <script src="./07169/1_1.js"></script>
@@ -42,198 +42,219 @@
 <script src="./01336/4_2.js"></script>
 <script src="./01336/5_1.js"></script>
 <script src="./01336/5_2.js"></script>
+
 <body>
-  <div id="app">
-    <div v-if="showPage">
-      <button style="margin-right: 18px;" @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
+    <div id="app">
+        <div v-if="showOperation">
+            <button style="margin-right: 18px;"
+                @click="showAnswer = !showAnswer">{{ showAnswer ? '隐藏' : '显示' }}答案</button>
 
-      科目：<select @change="selectType" v-model="nowType">
-        <option :value="item.value" v-for="(item, id) in TypeList">{{ item.value + item.label }}</option>
-      </select>
-      题库：<select name="323" @change="selectTK" v-model="nowTK">
-        <option :value="item" v-for="(item, id) in TKList[nowType]">{{ item }}</option>
-      </select>
-    </div>
-
-    <div class="list" v-for="(item, index) in kuList" :key="index" @click="showPage = !showPage">
-      <div class="list-title">{{ index + 1 }}.{{ item.TypeInfo.Title }}</div>
-
-      <div class="item" v-for="(i, id) in item.Question">
-        <div class="item-title">
-          {{ id + 1 }}.{{ i.Title }}<span v-if="showAnswer" style="color:red;font-size: 16px;font-weight: bold;">{{
-            i.Answer }}</span>
+            科目：<select @change="selectType" v-model="nowType">
+                <option :value="item.value" v-for="(item, id) in TypeList">{{ item.value + item.label }}</option>
+            </select>
+            题库：<select name="323" @change="selectTK" v-model="nowTK">
+                <option :value="item" v-for="(item, id) in TKList[nowType]">{{ item }}</option>
+            </select>
         </div>
 
-        <div class="item-answer">
-          <span class="answer-item" v-for="(text, value) in i.Body">
-            <span :style="'color:' + (i.Answer.includes(value) && showAnswer ? 'red' : 'black')">{{ value }}.{{ text
-              }}</span>
-          </span>
+        <input v-if="!showPage" type="text" v-model="psd" @change="psdChange">
+        <div v-else>
+            <div class="list" v-for="(item, index) in kuList" :key="index" @click="showOperation = !showOperation">
+                <div class="list-title">{{ index + 1 }}.{{ item.TypeInfo.Title }}</div>
+
+                <div class="item" v-for="(i, id) in item.Question">
+                    <div class="item-title">
+                        {{ id + 1 }}.{{ i.Title }}<span v-if="showAnswer"
+                            style="color:red;font-size: 16px;font-weight: bold;">{{
+                  i.Answer }}</span>
+                    </div>
+
+                    <div class="item-answer">
+                        <span class="answer-item" v-for="(text, value) in i.Body">
+                            <span :style="'color:' + (i.Answer.includes(value) && showAnswer ? 'red' : 'black')">{{ value }}.{{ text
+                    }}</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </body>
 <script>
-  const { createApp, ref } = Vue
+    const {
+        createApp,
+        ref
+    } = Vue
 
-  createApp({
-    setup() {
-      // 答案展示开关
-      const showAnswer = ref(false)
-      // 页面操作开关
-      const showPage = ref(true)
+    createApp({
+        setup() {
+            const psd = ref('')
+            // 答案展示开关
+            const showOperation = ref(false)
+            const showAnswer = ref(false)
 
-      // 科目
-      const TypeList = ref([{
-        value: '07169',
-        label: '软件开发工具与环境'
-      }, {
-        value: '02141',
-        label: '计算机网络技术'
-      }, {
-        value: '01336',
-        label: '软件项目管理'
-      }])
-      // 题库
-      const kuList = ref(null)
+            // 页面操作开关
+            const showPage = ref(false)
 
-      // 试卷列表
-      const TKList = ref({
-        '07169': [],
-        '02141': [],
-        '01336': []
-      })
+            // 科目
+            const TypeList = ref([{
+                value: '07169',
+                label: '软件开发工具与环境'
+            }, {
+                value: '02141',
+                label: '计算机网络技术'
+            }, {
+                value: '01336',
+                label: '软件项目管理'
+            }])
+            // 题库
+            const kuList = ref(null)
 
-      // 当前科目
-      const nowType = ref('07169')
+            // 试卷列表
+            const TKList = ref({
+                '07169': [],
+                '02141': [],
+                '01336': []
+            })
 
-      // 选择对应科目
-      function selectType(e) {
-        // 切换科目
-        nowType.value = e.target.value
-        // 切换默认题库为该科目的第一份题目
-        nowTK.value = TKList.value[nowType.value][0]
-        // console.log(this, e.target.value)
+            // 当前科目
+            const nowType = ref('07169')
 
-        // 初始化题库
-        kuList.value = this['topic' + nowTK.value + '_' + nowType.value]
-        kuList.value.forEach(i => {
-          i.Question.forEach(item => {
-            console.log(typeof item.Body)
-            if (item.Body && typeof item.Body === 'string') {
-              item.Body = JSON.parse(item.Body)
+            // 选择对应科目
+            function selectType(e) {
+                // 切换科目
+                nowType.value = e.target.value
+                // 切换默认题库为该科目的第一份题目
+                nowTK.value = TKList.value[nowType.value][0]
+                // console.log(this, e.target.value)
+
+                // 初始化题库
+                kuList.value = this['topic' + nowTK.value + '_' + nowType.value]
+                kuList.value.forEach(i => {
+                    i.Question.forEach(item => {
+                        console.log(typeof item.Body)
+                        if (item.Body && typeof item.Body === 'string') {
+                            item.Body = JSON.parse(item.Body)
+                        }
+                    })
+                });
+                // console.log(nowTK.value)
             }
-          })
-        });
-        // console.log(nowTK.value)
-      }
 
-      // 选择对应题库
-      function selectTK(e) {
-        console.log(this, e.target.value)
-        kuList.value = this['topic' + e.target.value + '_' + nowType.value]
-        kuList.value.forEach(i => {
-          i.Question.forEach(item => {
-            // console.log(typeof item.Body)
-            if (item.Body && typeof item.Body === 'string') {
-              item.Body = JSON.parse(item.Body)
+            // 选择对应题库
+            function selectTK(e) {
+                console.log(this, e.target.value)
+                kuList.value = this['topic' + e.target.value + '_' + nowType.value]
+                kuList.value.forEach(i => {
+                    i.Question.forEach(item => {
+                        // console.log(typeof item.Body)
+                        if (item.Body && typeof item.Body === 'string') {
+                            item.Body = JSON.parse(item.Body)
+                        }
+                    })
+                });
+                // console.log(e.target.value)
             }
-          })
-        });
-        // console.log(e.target.value)
-      }
 
-      // 获取所有引入题库
-      function getAllJSFiles() {
-        const scripts = document.querySelectorAll('script[src]');
-        return Array.from(scripts).map(script => script.src);
-      }
+            // 获取所有引入题库
+            function getAllJSFiles() {
+                const scripts = document.querySelectorAll('script[src]');
+                return Array.from(scripts).map(script => script.src);
+            }
 
-      // 使用示例
-      const jsFiles = getAllJSFiles();
+            // 使用示例
+            const jsFiles = getAllJSFiles();
 
-      // console.log(jsFiles); // 打印所有引入的JS文件的URL列表
-      jsFiles.forEach(i => {
-          // console.log(TKList.value)
-        i = i.replace('.js', '')
-        if (i.includes('07169')) {
-          i = i.replace('https://msunh1997.github.io/zikao/07169/', '')
-          i = i.replace('file:///Users/msh/Desktop/Code/zikao/07169/', '')
-          TKList.value['07169'].push(i)
+            // console.log(jsFiles); // 打印所有引入的JS文件的URL列表
+            jsFiles.forEach(i => {
+                // console.log(TKList.value)
+                i = i.replace('.js', '')
+                if (i.includes('07169')) {
+                    i = i.replace('https://msunh1997.github.io/zikao/07169/', '')
+                    i = i.replace('file:///Users/msh/Desktop/Code/zikao/07169/', '')
+                    TKList.value['07169'].push(i)
+                }
+                if (i.includes('01336')) {
+                    i = i.replace('https://msunh1997.github.io/zikao/01336/', '')
+                    i = i.replace('file:///Users/msh/Desktop/Code/zikao/01336/', '')
+                    TKList.value['01336'].push(i)
+                }
+                if (i.includes('02141')) {
+                    i = i.replace('https://msunh1997.github.io/zikao/02141/', '')
+                    i = i.replace('file:///Users/msh/Desktop/Code/zikao/02141/', '')
+                    TKList.value['02141'].push(i)
+                }
+                // console.log(TKList.value)
+            })
+
+            // 当前题库
+            const nowTK = ref(TKList.value[nowType.value][0])
+            // console.log(nowTK.value, this['topic' + TKList.value[0]])
+            console.log('topic' + TKList.value[nowType.value][0] + '_' + nowType.value, this['topic' + TKList
+                .value[nowType.value][0] + '_' + nowType.value])
+            let _temp = this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value]
+            if (_temp) {
+                _temp.forEach(i => {
+                    i.Question.forEach(item => {
+                        item.Body = JSON.parse(item.Body)
+                    })
+                });
+            }
+            kuList.value = _temp
+            // console.log(kuList.value, TKList[0])
+
+            function psdChange(e) {
+                if(btoa(e.target.value) === 'Y3M=') {{
+                    showPage.value = true
+                }}
+            }
+            return {
+                psd,
+                psdChange,
+                showOperation,
+                showPage,
+                showAnswer,
+                nowTK,
+                nowType,
+                TKList,
+                TypeList,
+                kuList,
+                selectTK,
+                selectType
+            }
         }
-        if (i.includes('01336')) {
-          i = i.replace('https://msunh1997.github.io/zikao/01336/', '')
-          i = i.replace('file:///Users/msh/Desktop/Code/zikao/01336/', '')
-          TKList.value['01336'].push(i)
-        }
-        if (i.includes('02141')) {
-          i = i.replace('https://msunh1997.github.io/zikao/02141/', '')
-          i = i.replace('file:///Users/msh/Desktop/Code/zikao/02141/', '')
-          TKList.value['02141'].push(i)
-        }
-          // console.log(TKList.value)
-      })
-
-      // 当前题库
-      const nowTK = ref(TKList.value[nowType.value][0])
-      // console.log(nowTK.value, this['topic' + TKList.value[0]])
-      console.log('topic' + TKList.value[nowType.value][0] + '_' + nowType.value, this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value])
-      let _temp = this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value]
-      if(_temp) {
-        _temp.forEach(i => {
-        i.Question.forEach(item => {
-          item.Body = JSON.parse(item.Body)
-        })
-      });
-      }
-      kuList.value = _temp
-      // console.log(kuList.value, TKList[0])
-
-      return {
-        showPage,
-        showAnswer,
-        nowTK,
-        nowType,
-        TKList,
-        TypeList,
-        kuList,
-        selectTK,
-        selectType
-      }
-    }
-  }).mount('#app')
+    }).mount('#app')
 </script>
 <style>
-  body {
-    font-size: 12px;
-    /* transform: scale(0.8); */
-  }
+    body {
+        font-size: 12px;
+        /* transform: scale(0.8); */
+    }
 
-  /* #app {
+    /* #app {
     margin-top: -88px;
   } */
-  .list {
-    padding: 8px;
-  }
+    .list {
+        padding: 8px;
+    }
 
-  .list-title {
-    font-weight: bold;
-    padding-bottom: 4px;
-  }
+    .list-title {
+        font-weight: bold;
+        padding-bottom: 4px;
+    }
 
-  .item {
-    padding-bottom: 10px;
-    margin-left: 8px;
-  }
+    .item {
+        padding-bottom: 10px;
+        margin-left: 8px;
+    }
 
-  item-title {
-    padding-bottom: 6px;
-  }
+    item-title {
+        padding-bottom: 6px;
+    }
 
-  .answer-item {
-    padding-right: 18px;
-  }
+    .answer-item {
+        padding-right: 18px;
+    }
 </style>
 
 </html>
