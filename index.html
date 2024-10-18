@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>题目</title>
 </head>
+<script src="./vue3.js"></script>
 <script src="./07169/1_1.js"></script>
 <script src="./07169/1_2.js"></script>
 <script src="./07169/2_1.js"></script>
@@ -73,7 +74,6 @@
     </div>
   </div>
 </body>
-<script src="./vue3.js"></script>
 <script>
   const { createApp, ref } = Vue
 
@@ -158,14 +158,17 @@
           // console.log(TKList.value)
         i = i.replace('.js', '')
         if (i.includes('07169')) {
+          i = i.replace('https://msunh1997.github.io/zikao/07169/', '')
           i = i.replace('file:///Users/msh/Desktop/Code/zikao/07169/', '')
           TKList.value['07169'].push(i)
         }
         if (i.includes('01336')) {
+          i = i.replace('https://msunh1997.github.io/zikao/01336/', '')
           i = i.replace('file:///Users/msh/Desktop/Code/zikao/01336/', '')
           TKList.value['01336'].push(i)
         }
         if (i.includes('02141')) {
+          i = i.replace('https://msunh1997.github.io/zikao/02141/', '')
           i = i.replace('file:///Users/msh/Desktop/Code/zikao/02141/', '')
           TKList.value['02141'].push(i)
         }
