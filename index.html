@@ -175,12 +175,16 @@
       // 当前题库
       const nowTK = ref(TKList.value[nowType.value][0])
       // console.log(nowTK.value, this['topic' + TKList.value[0]])
-      this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value].forEach(i => {
+      console.log('topic' + TKList.value[nowType.value][0] + '_' + nowType.value, this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value])
+      let _temp = this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value]
+      if(_temp) {
+        _temp.forEach(i => {
         i.Question.forEach(item => {
           item.Body = JSON.parse(item.Body)
         })
       });
-      kuList.value = this['topic' + TKList.value[nowType.value][0] + '_' + nowType.value]
+      }
+      kuList.value = _temp
       // console.log(kuList.value, TKList[0])
 
       return {
